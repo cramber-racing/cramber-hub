@@ -13,6 +13,7 @@ const DATA_OFFSET: usize = 8;
 const DATA_MAX: usize = REPORT_SIZE - DATA_OFFSET;
 
 const APP_HEADER_SIZE: usize = 0x200;
+const FULL_IMAGE_APP_OFFSET: usize = 0x8000;
 const APP_HEADER_MAGIC: u32 = 0x4352_4D41;
 const RAM_START: u32 = 0x2000_0000;
 const RAM_END: u32 = 0x2002_0000;
@@ -42,12 +43,22 @@ pub struct FirmwareInfo {
 
 impl FirmwareImage {
     pub fn read(path: &str) -> Result<Self, String> {
-        let bytes = std::fs::read(path).map_err(|e| format!("Couldn't read the file: {e}"))?;
+        let file = std::fs::read(path).map_err(|e| format!("Couldn't read the file: {e}"))?;
+        let has_app_at = |at: usize| {
+            file.len() >= at + APP_HEADER_SIZE + 8
+                && u32::from_le_bytes([file[at], file[at + 1], file[at + 2], file[at + 3]]) == APP_HEADER_MAGIC
+        };
+
+        let start = if has_app_at(0) {
+            0
+        } else if has_app_at(FULL_IMAGE_APP_OFFSET) {
+            FULL_IMAGE_APP_OFFSET
+        } else {
+            return Err("That file isn't Cramber DD firmware.".into());
+        };
+        let bytes = &file[start..];
         let word = |at: usize| u32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]]);
 
-        if bytes.len() < APP_HEADER_SIZE + 8 || word(0) != APP_HEADER_MAGIC {
-            return Err("That file isn't Cramber DD firmware.".into());
-        }
         let stack = word(APP_HEADER_SIZE);
         let reset = word(APP_HEADER_SIZE + 4);
         if !(RAM_START..=RAM_END).contains(&stack) || !(APP_VECTOR_ADDR..APP_REGION_END).contains(&reset) {
