@@ -41,6 +41,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             base::connect,
             base::is_connected,
+            base::get_serial,
             base::get_param,
             base::get_params,
             base::get_defaults,

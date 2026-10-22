@@ -65,7 +65,7 @@ const range = $derived(wheel.values.steeringRangeDeg);
 <DevicePage title="Wheel Base">
 	{#snippet hero()}
 		<DeviceHero
-			name="Cramber DD{wheel.fwVersion !== null ? ` · V${wheel.fwVersion}` : ''}"
+			name="Cramber DD{wheel.fwVersion !== null ? ` · V${wheel.fwVersion}` : ''}{wheel.connected && wheel.serial ? ` · SN ${wheel.serial}` : ''}"
 			watermark="DD"
 			tone="hero"
 		>

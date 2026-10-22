@@ -6,6 +6,7 @@ import {
 	getDefaults,
 	getParam,
 	getParams,
+	getSerial,
 	getWheelAxis,
 	isConnected,
 	ParamId,
@@ -80,6 +81,7 @@ class WheelBase {
 	connected = $state(false);
 	error = $state<string | null>(null);
 	fwVersion = $state<number | null>(null);
+	serial = $state<string | null>(null);
 	wheelAngle = $state(0);
 	axisState = $state<AxisState | null>(null);
 	homed = $state(false);
@@ -208,7 +210,11 @@ class WheelBase {
 		this.#busy = true;
 		const wasConnected = this.connected;
 		try {
-			if (!this.connected) this.connected = await connect();
+			if (!this.connected) {
+				this.connected = await connect();
+				const serial = this.connected ? await getSerial() : null;
+				this.serial = serial?.replace(/^CRAMBER-DD-/, "") ?? null;
+			}
 
 			const withSettings =
 				!wasConnected || this.#pollCount++ % SETTINGS_EVERY_N_POLLS === 0;

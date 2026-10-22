@@ -28,6 +28,11 @@ pub fn is_connected(state: State<DeviceState>) -> bool {
 }
 
 #[tauri::command]
+pub fn get_serial(state: State<DeviceState>) -> Option<String> {
+    state.0.lock().ok().and_then(|d| d.serial())
+}
+
+#[tauri::command]
 pub fn get_param(state: State<DeviceState>, id: u16) -> Result<Response, String> {
     with_device(&state, |d| d.transact(Command::Get, id, Value::None))
 }

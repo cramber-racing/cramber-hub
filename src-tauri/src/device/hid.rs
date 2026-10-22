@@ -14,11 +14,16 @@ pub struct Device {
     dev: Option<HidDevice>,
     sequence: u8,
     client_tag: u16,
+    serial: Option<String>,
 }
 
 impl Device {
     pub fn is_connected(&self) -> bool {
         self.dev.is_some()
+    }
+
+    pub fn serial(&self) -> Option<String> {
+        self.dev.as_ref().and(self.serial.clone())
     }
 
     pub fn connect(&mut self) -> Result<(), String> {
@@ -42,6 +47,7 @@ impl Device {
             .ok_or_else(|| "device not found".to_string())?;
 
         let dev = info.open_device(api).map_err(|e| e.to_string())?;
+        self.serial = info.serial_number().map(str::to_owned);
         self.dev = Some(dev);
         Ok(())
     }
