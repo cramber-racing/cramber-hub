@@ -32,6 +32,22 @@ jobs:
         with:
           workspaces: "./src-tauri -> target"
 
+      - name: Check the tag against the app version
+        shell: bash
+        run: |
+          for file in src-tauri/tauri.conf.json package.json; do
+            version=$(sed -n 's/^\s*"version": *"\([0-9.]*\)".*/\1/p' "$file" | head -1)
+            if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+              echo "::error::Tag ${GITHUB_REF_NAME} doesn't match the version ${version} in ${file} (expected v${version})"
+              exit 1
+            fi
+          done
+          version=$(sed -n 's/^version *= *"\([0-9.]*\)".*/\1/p' src-tauri/Cargo.toml | head -1)
+          if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} doesn't match the version ${version} in src-tauri/Cargo.toml (expected v${version})"
+            exit 1
+          fi
+
       - run: bun install --frozen-lockfile
 
       - uses: tauri-apps/tauri-action@v0

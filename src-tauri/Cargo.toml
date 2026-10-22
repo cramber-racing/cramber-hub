@@ -1,6 +1,6 @@
 [package]
 name = "cramber"
-version = "0.1.1"
+version = "0.1.2"
 description = "Cramber Hub - control app for Cramber sim-racing hardware"
 authors = ["Cramber"]
 license = "GPL-3.0-only"
