@@ -182,7 +182,8 @@ class WheelBase {
 	#angleLoop = async () => {
 		if (!this.#running) return;
 		let fromJoystick = false;
-		if (this.connected && this.#visible) {
+		if (!this.connected) this.wheelAngle = 0;
+		else if (this.#visible) {
 			try {
 				const axis = await getWheelAxis();
 				if (axis !== null) {

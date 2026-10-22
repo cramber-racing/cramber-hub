@@ -82,7 +82,10 @@ const range = $derived(wheel.values.steeringRangeDeg);
 				</div>
 			{/snippet}
 
-			<div class="relative flex flex-1 flex-col items-center justify-center">
+			<div
+				class="relative flex flex-1 flex-col items-center justify-center transition-[filter,opacity] duration-500
+					{wheel.connected ? '' : 'opacity-50 grayscale'}"
+			>
 				<InteractiveWheel angle={wheel.wheelAngle} {range} />
 			</div>
 
