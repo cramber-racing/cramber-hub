@@ -14,7 +14,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 function details(kind: DeviceKind): { version: string | null; stats: { label: string; value: string }[] } {
 	if (kind === "wheel") {
 		return {
-			version: wheel.fwVersion !== null ? `V${wheel.fwVersion}` : null,
+			version: wheel.firmware !== null ? `V${wheel.firmware}` : null,
 			stats: [
 				{ label: "Range", value: `${wheel.values.steeringRangeDeg.toFixed(0)}°` },
 				{ label: "FFB", value: wheel.ffbActive ? "On" : "Off" },

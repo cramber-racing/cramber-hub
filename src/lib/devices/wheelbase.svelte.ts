@@ -3,6 +3,7 @@ import {
 	bool,
 	clearFault,
 	connect,
+	formatFirmwareVersion,
 	getDefaults,
 	getParam,
 	getParams,
@@ -81,6 +82,12 @@ class WheelBase {
 	connected = $state(false);
 	error = $state<string | null>(null);
 	fwVersion = $state<number | null>(null);
+	/** "1.2.0", or null while unknown. */
+	get firmware(): string | null {
+		return this.fwVersion === null
+			? null
+			: formatFirmwareVersion(this.fwVersion);
+	}
 	serial = $state<string | null>(null);
 	suspended = false;
 	wheelAngle = $state(0);

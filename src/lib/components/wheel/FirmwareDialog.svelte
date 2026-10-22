@@ -1,7 +1,7 @@
 <script lang="ts">
 import Button from "$lib/components/ui/Button.svelte";
 import { firmware, STAGE_LABEL } from "$lib/devices/firmware.svelte";
-import type { UpdateStage } from "$lib/devices/protocol";
+import { formatFirmwareVersion, type UpdateStage } from "$lib/devices/protocol";
 import { wheel } from "$lib/devices/wheelbase.svelte";
 
 const STAGE_SPAN: Record<UpdateStage, [number, number]> = {
@@ -34,8 +34,8 @@ const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
 			{#if s.step === "confirm"}
 				<h3 id="firmware-title" class="mb-4 font-display text-2xl font-bold tracking-tighter uppercase">Update firmware</h3>
 				<p class="text-sm">
-					Install firmware <strong>V{s.file.version}</strong> ({kb(s.file.size)}) on the Cramber DD{wheel.fwVersion !== null
-						? `, now running V${wheel.fwVersion}`
+					Install firmware <strong>{formatFirmwareVersion(s.file.version)}</strong> ({kb(s.file.size)}) on the Cramber DD{wheel.firmware !== null
+						? `, now running ${wheel.firmware}`
 						: ""}.
 				</p>
 				<p class="mt-3 font-mono text-[10px] leading-relaxed text-muted-foreground">
@@ -57,7 +57,7 @@ const kb = (bytes: number) => `${Math.round(bytes / 1024)} KB`;
 				<p class="mt-6 font-mono text-[10px] text-muted-foreground">Don't unplug the base.</p>
 			{:else if s.step === "done"}
 				<h3 id="firmware-title" class="mb-4 font-display text-2xl font-bold tracking-tighter uppercase">Firmware updated</h3>
-				<p class="text-sm">The Cramber DD is now running <strong>V{s.file.version}</strong>.</p>
+				<p class="text-sm">The Cramber DD is now running <strong>{formatFirmwareVersion(s.file.version)}</strong>.</p>
 				<div class="mt-8 flex justify-end">
 					<Button variant="solid" onclick={() => firmware.close()}>Done</Button>
 				</div>

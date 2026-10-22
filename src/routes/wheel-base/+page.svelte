@@ -67,7 +67,7 @@ const range = $derived(wheel.values.steeringRangeDeg);
 <DevicePage title="Wheel Base">
 	{#snippet hero()}
 		<DeviceHero
-			name="Cramber DD{wheel.fwVersion !== null ? ` · V${wheel.fwVersion}` : ''}{wheel.connected && wheel.serial ? ` · SN ${wheel.serial}` : ''}"
+			name="Cramber DD{wheel.firmware !== null ? ` · V${wheel.firmware}` : ''}{wheel.connected && wheel.serial ? ` · SN ${wheel.serial}` : ''}"
 			watermark="DD"
 			tone="hero"
 		>
@@ -163,7 +163,7 @@ const range = $derived(wheel.values.steeringRangeDeg);
 					<span>
 						<span class="mb-0.5 block text-xs font-bold tracking-widest uppercase">Firmware</span>
 						<span class="font-mono text-[10px] text-muted-foreground">
-							{wheel.fwVersion !== null ? `Version ${wheel.fwVersion}` : "Unknown version"}. Install a firmware file
+							{wheel.firmware !== null ? `Version ${wheel.firmware}` : "Unknown version"}. Install a firmware file
 							(.bin) to update the base.
 						</span>
 						{#if firmware.fileError}

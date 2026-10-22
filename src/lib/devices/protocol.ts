@@ -117,3 +117,7 @@ export const inspectFirmware = (path: string) =>
 export const bootloaderPresent = () => invoke<boolean>("bootloader_present");
 export const updateFirmware = (path: string) =>
 	invoke<void>("update_firmware", { path });
+
+/** Firmware versions are packed as (major << 16) | (minor << 8) | patch. */
+export const formatFirmwareVersion = (packed: number) =>
+	`${packed >>> 16}.${(packed >>> 8) & 0xff}.${packed & 0xff}`;
