@@ -14,7 +14,7 @@
 		"icon-gen": "tauri icon ./src-tauri/icons/icon.png",
 		"format": "biome format --write"
 	},
-	"license": "UNLICENSED",
+	"license": "GPL-3.0-only",
 	"private": true,
 	"dependencies": {
 		"@fontsource-variable/jetbrains-mono": "^5.3.0",

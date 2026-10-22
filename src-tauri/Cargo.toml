@@ -3,6 +3,7 @@ name = "cramber"
 version = "0.1.0"
 description = "Cramber Hub - control app for Cramber sim-racing hardware"
 authors = ["Cramber"]
+license = "GPL-3.0-only"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
