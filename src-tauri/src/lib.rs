@@ -4,7 +4,7 @@ mod profiles;
 mod tray;
 mod window;
 
-use device::DeviceState;
+use device::{DeviceState, Joystick};
 use device::commands as base;
 use game_watch::GameWatch;
 use tauri::{Manager, WindowEvent};
@@ -22,11 +22,13 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
         .manage(DeviceState::default())
+        .manage(Joystick::default())
         .manage(GameWatch::default())
         .setup(|app| {
             tray::setup(app)?;
             window::show_window_if_frontend_stalls(app.handle());
             app.state::<GameWatch>().start(app.handle().clone());
+            app.state::<Joystick>().start();
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -46,6 +48,7 @@ pub fn run() {
             base::calibrate,
             base::clear_fault,
             base::reboot,
+            base::get_wheel_axis,
             profiles::read_profile_file,
             profiles::write_profile_file,
             game_watch::set_game_watch,

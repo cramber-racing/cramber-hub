@@ -15,6 +15,12 @@ pub enum Command {
     GetDefault = 0x0A,
 }
 
+impl Command {
+    pub fn is_resendable(self) -> bool {
+        matches!(self, Command::Get | Command::GetDefault)
+    }
+}
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 #[serde(tag = "type", content = "value", rename_all = "lowercase")]
 pub enum Value {

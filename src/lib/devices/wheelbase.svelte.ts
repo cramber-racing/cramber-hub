@@ -6,6 +6,8 @@ import {
 	getDefaults,
 	getParam,
 	getParams,
+	getWheelAxis,
+	isConnected,
 	ParamId,
 	responseValue,
 	Status,
@@ -179,15 +181,22 @@ class WheelBase {
 
 	#angleLoop = async () => {
 		if (!this.#running) return;
+		let fromJoystick = false;
 		if (this.connected && this.#visible) {
 			try {
-				const angle = responseValue(await getParam(ParamId.WheelAngleDeg));
-				if (typeof angle === "number") this.wheelAngle = angle;
+				const axis = await getWheelAxis();
+				if (axis !== null) {
+					this.wheelAngle = (axis * this.values.steeringRangeDeg) / 2;
+					fromJoystick = true;
+				} else {
+					const angle = responseValue(await getParam(ParamId.WheelAngleDeg));
+					if (typeof angle === "number") this.wheelAngle = angle;
+				}
 			} catch {}
 		}
 		const delay = !this.#visible
 			? ANGLE_MS_HIDDEN
-			: this.gameFfb
+			: this.gameFfb && !fromJoystick
 				? ANGLE_MS_IN_GAME
 				: ANGLE_MS;
 		this.#angleTimer = setTimeout(this.#angleLoop, delay);
@@ -224,8 +233,8 @@ class WheelBase {
 			if (withSettings && Object.keys(this.defaults).length === 0)
 				void this.#loadDefaults();
 		} catch {
-			this.connected = false;
-			this.defaults = {};
+			this.connected = await isConnected().catch(() => false);
+			if (!this.connected) this.defaults = {};
 		} finally {
 			this.#busy = false;
 		}

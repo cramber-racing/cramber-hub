@@ -85,6 +85,7 @@ export function responseValue(response: Response): number | boolean | null {
 export const connect = () => invoke<boolean>("connect");
 export const isConnected = () => invoke<boolean>("is_connected");
 export const getParam = (id: ParamId) => invoke<Response>("get_param", { id });
+export const getWheelAxis = () => invoke<number | null>("get_wheel_axis");
 export const getParams = (ids: ParamId[]) =>
 	invoke<Response[]>("get_params", { ids });
 export const getDefaults = (ids: ParamId[]) =>

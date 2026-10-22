@@ -3,6 +3,7 @@ use std::sync::Mutex;
 use tauri::State;
 
 use super::hid::Device;
+use super::joystick::Joystick;
 use super::protocol::{Command, Response, Value};
 
 #[derive(Default)]
@@ -67,4 +68,9 @@ pub fn reboot(state: State<DeviceState>) -> Result<(), String> {
         d.disconnect();
         Ok(())
     })
+}
+
+#[tauri::command]
+pub fn get_wheel_axis(joystick: State<Joystick>) -> Option<f32> {
+    joystick.axis()
 }
