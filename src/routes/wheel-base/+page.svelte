@@ -4,12 +4,14 @@ import DevicePage from "$lib/components/layout/DevicePage.svelte";
 import Button from "$lib/components/ui/Button.svelte";
 import Card from "$lib/components/ui/Card.svelte";
 import Notice from "$lib/components/ui/Notice.svelte";
+import FirmwareDialog from "$lib/components/wheel/FirmwareDialog.svelte";
 import InteractiveWheel from "$lib/components/wheel/InteractiveWheel.svelte";
 import ResetButton from "$lib/components/wheel/ResetButton.svelte";
 import SettingSlider from "$lib/components/wheel/SettingSlider.svelte";
 import SettingToggle from "$lib/components/wheel/SettingToggle.svelte";
 import { AxisState } from "$lib/devices/protocol";
 import { type NumberKey, type ProfileKey, SETTINGS, type ToggleKey } from "$lib/devices/settings";
+import { firmware } from "$lib/devices/firmware.svelte";
 import { wheel } from "$lib/devices/wheelbase.svelte";
 
 interface Section {
@@ -105,7 +107,14 @@ const range = $derived(wheel.values.steeringRangeDeg);
 		</DeviceHero>
 	{/snippet}
 
-	{#if !wheel.connected}
+	{#if !wheel.connected && firmware.inBootloader}
+		<Notice title="Base in update mode" tone="danger">
+			The last firmware update didn't finish. Install the firmware again to get the base running.
+			{#snippet action()}
+				<Button variant="danger" onclick={() => firmware.choose()}>Install firmware…</Button>
+			{/snippet}
+		</Notice>
+	{:else if !wheel.connected}
 		<Notice title="Base not connected">
 			Plug in the Cramber DD over USB. Settings unlock as soon as it's found.
 		</Notice>
@@ -149,7 +158,23 @@ const range = $derived(wheel.values.steeringRangeDeg);
 				<div class="flex flex-wrap gap-3">
 					<Button disabled={!wheel.connected} onclick={() => wheel.playSound()}>Play sound</Button>
 				</div>
+
+				<div class="flex items-center justify-between gap-4 border-t pt-6">
+					<span>
+						<span class="mb-0.5 block text-xs font-bold tracking-widest uppercase">Firmware</span>
+						<span class="font-mono text-[10px] text-muted-foreground">
+							{wheel.fwVersion !== null ? `Version ${wheel.fwVersion}` : "Unknown version"}. Install a firmware file
+							(.bin) to update the base.
+						</span>
+						{#if firmware.fileError}
+							<span class="mt-1 block font-mono text-[10px] text-destructive">{firmware.fileError}</span>
+						{/if}
+					</span>
+					<Button disabled={!wheel.connected} onclick={() => firmware.choose()}>Update firmware…</Button>
+				</div>
 			</div>
 		</Card>
 	</div>
 </DevicePage>
+
+<FirmwareDialog />

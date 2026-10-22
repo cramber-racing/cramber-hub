@@ -97,3 +97,23 @@ export const calibrate = (caltype: number) =>
 	invoke<Response>("calibrate", { caltype });
 export const clearFault = () => invoke<Response>("clear_fault");
 export const reboot = () => invoke<void>("reboot");
+
+export interface FirmwareInfo {
+	version: number;
+	size: number;
+}
+export type UpdateStage =
+	| "restarting"
+	| "erasing"
+	| "writing"
+	| "verifying"
+	| "starting";
+export interface UpdateProgress {
+	stage: UpdateStage;
+	progress: number;
+}
+export const inspectFirmware = (path: string) =>
+	invoke<FirmwareInfo>("inspect_firmware", { path });
+export const bootloaderPresent = () => invoke<boolean>("bootloader_present");
+export const updateFirmware = (path: string) =>
+	invoke<void>("update_firmware", { path });

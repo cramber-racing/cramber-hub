@@ -54,6 +54,7 @@ It runs quietly in the system tray, so your settings are on the base before you 
 - Virtual end stops with adjustable hardness, cushion and width
 - Changes apply instantly, with a reset to factory defaults
 - Live view of the wheel position
+- Firmware updates over USB, no programmer needed
 
 **Profiles**
 - Every change is saved into the active profile

@@ -82,6 +82,7 @@ class WheelBase {
 	error = $state<string | null>(null);
 	fwVersion = $state<number | null>(null);
 	serial = $state<string | null>(null);
+	suspended = false;
 	wheelAngle = $state(0);
 	axisState = $state<AxisState | null>(null);
 	homed = $state(false);
@@ -206,7 +207,7 @@ class WheelBase {
 	};
 
 	async #poll() {
-		if (this.#busy) return;
+		if (this.#busy || this.suspended) return;
 		this.#busy = true;
 		const wasConnected = this.connected;
 		try {

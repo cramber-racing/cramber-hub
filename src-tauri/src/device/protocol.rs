@@ -13,7 +13,10 @@ pub enum Command {
     Reboot = 0x07,
     ClearFault = 0x08,
     GetDefault = 0x0A,
+    EnterBootloader = 0x0C,
 }
+
+pub const BOOTLOADER_CONFIRM: u16 = 0xB007;
 
 impl Command {
     pub fn is_resendable(self) -> bool {

@@ -1,4 +1,5 @@
 pub mod commands;
+mod firmware;
 mod hid;
 mod joystick;
 mod protocol;
