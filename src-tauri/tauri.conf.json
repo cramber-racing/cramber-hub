@@ -29,7 +29,8 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": "all",
+		"targets": ["nsis"],
+		"createUpdaterArtifacts": true,
 		"icon": [
 			"icons/32x32.png",
 			"icons/128x128.png",
@@ -37,5 +38,14 @@
 			"icons/icon.icns",
 			"icons/icon.ico"
 		]
+	},
+	"plugins": {
+		"updater": {
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDc0N0ZCNkYwNTA1NjQ2RTAKUldUZ1JsWlE4TFovZEdJTVR0bGxOQ1lxVUtpWi9SK0xxWGxCczVWRUF6cjJaTkxmWHB3M2srYlkK",
+			"endpoints": ["https://github.com/cramber-racing/cramber-hub/releases/latest/download/latest.json"],
+			"windows": {
+				"installMode": "passive"
+			}
+		}
 	}
 }

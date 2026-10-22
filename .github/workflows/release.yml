@@ -1,0 +1,48 @@
+# Builds the Windows installer, signs it for the in-app updater and drafts a
+# GitHub release with it and latest.json. Runs when a version tag is pushed:
+#
+#   1. set the same version in src-tauri/tauri.conf.json, src-tauri/Cargo.toml and package.json
+#   2. git tag v0.2.0 && git push origin v0.2.0
+#   3. review the draft release on GitHub and publish it -- installed apps see
+#      the update once it's published
+#
+# Repository secrets: TAURI_SIGNING_PRIVATE_KEY (contents of the .key file) and
+# TAURI_SIGNING_PRIVATE_KEY_PASSWORD.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - run: bun install --frozen-lockfile
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tauriScript: bunx tauri
+          tagName: ${{ github.ref_name }}
+          releaseName: Cramber Hub ${{ github.ref_name }}
+          releaseBody: Download and run the installer below. Installed copies of Cramber Hub update themselves.
+          releaseDraft: true
+          includeUpdaterJson: true

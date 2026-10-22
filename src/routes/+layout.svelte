@@ -5,6 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 import { onDestroy, onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { theme } from "$lib/app/theme.svelte";
+import { updater } from "$lib/app/updater.svelte";
 import Sidebar from "$lib/components/layout/Sidebar.svelte";
 import TitleBar from "$lib/components/layout/TitleBar.svelte";
 import { firmware } from "$lib/devices/firmware.svelte";
@@ -22,10 +23,12 @@ onMount(async () => {
 	await listen<string>("navigate", (e) => goto(e.payload));
 	wheel.start();
 	firmware.start();
+	updater.start();
 });
 onDestroy(() => {
 	wheel.stop();
 	firmware.stop();
+	updater.stop();
 });
 </script>
 

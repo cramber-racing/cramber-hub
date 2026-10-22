@@ -1,5 +1,6 @@
 <script lang="ts">
 import { page } from "$app/state";
+import { updater } from "$lib/app/updater.svelte";
 import Logo from "./Logo.svelte";
 
 const NAV = [
@@ -16,7 +17,7 @@ const SETTINGS = { href: "/settings", label: "Settings" };
 const isActive = (href: string) => (href === "/" ? page.url.pathname === "/" : page.url.pathname.startsWith(href));
 </script>
 
-{#snippet navItem(item: { href: string; label: string })}
+{#snippet navItem(item: { href: string; label: string }, badge = "")}
 	{@const active = isActive(item.href)}
 	<a
 		href={item.href}
@@ -31,7 +32,13 @@ const isActive = (href: string) => (href === "/" ? page.url.pathname === "/" : p
 			{item.label}
 		</span>
 
-		{#if active}<span class="ml-auto size-1.5 rounded-full bg-primary"></span>{/if}
+		{#if badge}
+			<span class="ml-auto rounded-full bg-primary px-2 py-0.5 font-mono text-[8px] tracking-widest text-primary-foreground uppercase">
+				{badge}
+			</span>
+		{:else if active}
+			<span class="ml-auto size-1.5 rounded-full bg-primary"></span>
+		{/if}
 	</a>
 {/snippet}
 
@@ -48,6 +55,6 @@ const isActive = (href: string) => (href === "/" ? page.url.pathname === "/" : p
 	</nav>
 
 	<nav class="mt-auto border-t py-4">
-		{@render navItem(SETTINGS)}
+		{@render navItem(SETTINGS, updater.available ? "Update" : "")}
 	</nav>
 </aside>

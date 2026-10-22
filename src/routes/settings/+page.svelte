@@ -6,6 +6,8 @@ import {
 } from "@tauri-apps/plugin-autostart";
 import { onMount } from "svelte";
 import { type ThemeMode, theme } from "$lib/app/theme.svelte";
+import { updater } from "$lib/app/updater.svelte";
+import Button from "$lib/components/ui/Button.svelte";
 import PageHeader from "$lib/components/layout/PageHeader.svelte";
 import Card from "$lib/components/ui/Card.svelte";
 import ToggleControl from "$lib/components/ui/ToggleControl.svelte";
@@ -106,6 +108,53 @@ async function setStartWithWindows(on: boolean) {
 					</button>
 				{/each}
 			</div>
+		</Card>
+
+		<Card title="Updates" description="New versions of Cramber Hub are installed from here.">
+			<div class="flex items-center justify-between gap-6">
+				<div class="min-w-0">
+					{#if updater.available}
+						<span class="mb-0.5 block text-xs font-bold tracking-widest text-primary uppercase">
+							Version {updater.available.version} available
+						</span>
+						<span class="font-mono text-[10px] text-muted-foreground">
+							You have {updater.currentVersion ?? "an older version"}. The app restarts to finish the update.
+						</span>
+					{:else}
+						<span class="mb-0.5 block text-xs font-bold tracking-widest uppercase">
+							Cramber Hub {updater.currentVersion ?? ""}
+						</span>
+						<span class="font-mono text-[10px] text-muted-foreground">
+							{updater.checking
+								? "Checking for updates…"
+								: updater.lastChecked
+									? `Up to date. Last checked at ${updater.lastChecked.toLocaleTimeString()}.`
+									: "Checks for updates automatically."}
+						</span>
+					{/if}
+				</div>
+
+				{#if updater.available}
+					<Button variant="solid" disabled={updater.installing} onclick={() => updater.install()}>
+						{#if updater.installing}
+							{updater.progress === null ? "Installing…" : `Downloading ${Math.round(updater.progress * 100)}%`}
+						{:else}
+							Install & restart
+						{/if}
+					</Button>
+				{:else}
+					<Button disabled={updater.checking} onclick={() => updater.check()}>Check for updates</Button>
+				{/if}
+			</div>
+
+			{#if updater.available?.notes}
+				<p class="mt-6 border-t pt-6 font-mono text-[10px] leading-relaxed whitespace-pre-line text-muted-foreground">
+					{updater.available.notes}
+				</p>
+			{/if}
+			{#if updater.error}
+				<p class="mt-4 font-mono text-[10px] text-destructive">{updater.error}</p>
+			{/if}
 		</Card>
 
 		<Card title="System" description="How Cramber Hub runs on this PC.">
